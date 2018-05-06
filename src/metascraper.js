@@ -1,5 +1,5 @@
 ﻿/*!
- * Metascraper JavaScript Library v0.6.1
+ * Metascraper JavaScript Library v0.6.2
  * https://metascraper.com/
  *
  * Copyright Metascraper
@@ -15,7 +15,7 @@ var meta = {
 
 
     projectName: "Metascraper",
-    version: "0.6.1",
+    version: "0.6.2",
 
     options: {
         webApiPrefix: "http://localhost/",	    	// fully qualified webapi root
@@ -326,8 +326,7 @@ var meta = {
                 var member = elems[i].getAttribute(meta.options.attrMemberName)
                 if (member && data[member])
                     value = data[member][elems[i].getAttribute(attrName)]
-            } else
-                value = data[elems[i].getAttribute(attrName)];
+            } 
             if (!(value == null))
                 meta.setValue(elems[i], value);
         }
@@ -373,7 +372,8 @@ var meta = {
                     tr.setAttribute("onclick", "location.href = '" + rowHrefVal + "'");
                 }
                 if (rowClick && rowClick.length > 0) {      // does the row have an click?
-                    tr.setAttribute("onclick", rowClick);
+                    var rowClickVal = (dataValue.length > 0) ? rowClick.replace(meta.options.indexName, data[r][dataValue]) : rowClick;
+                    tr.setAttribute("onclick", rowClickVal);
                 }
                 if (rowClass && rowClass.length > 0) {      // does the row have a class?
                     tr.classList.add(rowClass);
