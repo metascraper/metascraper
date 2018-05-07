@@ -18,20 +18,20 @@ Metascraper is designed with one principal in mind - reducing redundant code in 
 ##### login.html
 ```html
 <h3>login</h3>
-<p>login by entering your credentials. </p>
+<p>login by entering your credentials.</p>
 
 <div>
-    <input type="text" data-value="username" />
+    <input type='text' data-value='username' />
 </div>
 <div>
-    <input type="password" data-value="password" />
+    <input type='password' data-value='password' />
 </div>
 
-<div id="divLoginFailed" class="error hidden">Login failed. Please try again.</div>
-<button onclick="loginClicked()">login</button>
-<a href="../signup/signup.htm">sign up</a>
+<div id='divLoginFailed' class='hidden'>Login failed. Please try again.</div>
+<button onclick='loginClicked()'>login</button>
+<a href='../signup/signup.htm'>sign up</a>
 ```
-    
+
 ##### login.js
 ```javascript
 function loginClicked() {
@@ -42,11 +42,16 @@ function loginClicked() {
             location.href = '../item-list/item-list.htm';
         },
         error: function (xhr, textStatus, errorThrown) {
-            show(divLoginFailed);
+            divLoginFailed.className = '';
         }
     };
 
     meta.login(params);
 }
+```
+
+##### JSON sent to server
+```json
+{"username":"someuser","password":"somepass"}
 ```
 
