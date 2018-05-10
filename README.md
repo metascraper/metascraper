@@ -110,7 +110,7 @@ meta.ready(
 );
 ```
 
-##### JSON recieved from meta.get(obj)
+##### JSON recieved from meta.get(obj) call to /api/items
 ```json
 {"Items":
   [
@@ -121,3 +121,116 @@ meta.ready(
   ]
 }
 ```
+
+##### item-detail.html
+```html
+<h3>Item Detail</h3>
+<div>
+    <label>Description</label>
+    <input type="text" data-value="Description" data-member="Item" />
+</div>
+<div>
+    <label>Group</label>
+    <select data-value="GroupId" data-array="Groups" data-member="Item"
+            data-text="Description">
+        <option value="" selected>Unassigned</option>
+    </select>
+</div>
+<div>
+    <label>Completed</label>
+    <input type="checkbox" data-value="IsComplete" data-member="Item" />
+</div>
+<div>
+    <label>Created Date</label>
+    <span data-value="CreateDate" data-type="date" data-member="Item" data-scrape="false" ></span>
+</div>
+<input type="hidden" id="hdnItemId" data-value="ItemId" data-member="Item" value="0" />
+
+<div id="divMessage" ></div>
+<button onclick="saveClick()">Save</button>
+<button id="btnDelete" onclick="deleteClick()" class="none">Delete</button>
+<a href="../item-list/item-list.htm">Cancel</a>
+```
+
+##### item-detail.js
+```javascript
+const itemsUrl = 'http://www.yourserver.com/api/items/';
+
+function saveClick() {
+    var o = {
+        url: itemsUrl,
+        success: function (data) {
+            location.href = "../item-list/item-list.htm";
+        },
+        error: function (xhr) {
+            divMessage.innerText = "An Error Occurred. Please Try Again.";
+        }
+    };
+    if (hdnItemId.value === "0")
+        meta.post(o);
+    else
+        meta.put(o);
+}
+
+function deleteClick() {
+    if (!confirm('Delete this item?'))
+        return;
+    var itemId = Number(hdnItemId.value);
+    var o = {
+        url: itemsUrl + itemId,
+        success: function (data) {
+            location.href = "../item-list/item-list.htm";
+        },
+        error: function (xhr) {
+            divMessage.innerText = "An Error Occurred. Please Try Again.";
+        }
+    };
+    meta.del(o);
+}
+
+function initPage() {
+    meta.loadHeader({
+        url: '../header/header.htm',
+        success: function (data) {
+            active(navItem);
+        }
+    });
+
+    var itemId = meta.getUrlParam('itemId') || "0";
+    if (itemId) {
+        btnDelete.classList.remove('none');
+    } 
+    var o = {
+        url: itemsUrl + itemId,
+        error: function (xhr) {
+            divMessage.innerText = "An Error Occurred. Please Try Again.";
+        }
+    };
+    
+    meta.get(o);    
+}
+
+meta.ready(
+    function () {
+        initPage();
+    }
+);
+```
+
+##### JSON recieved from meta.get(obj) call to /api/items/20
+```json
+{
+  "Item": {"ItemId":20,"Description":"Item 2","IsComplete":false,"GroupId":13,"Group":null,"CreateDate":"2018-05-05T23:00:51.713","UserId":9,"Username":null},
+  "Groups":
+    [
+      {"GroupId":11,"Description":"Group 1","UserId":9,"CreateDate":"2018-05-03T23:00:51.64"},
+      {"GroupId":12,"Description":"Group 4","UserId":9,"CreateDate":"2018-05-04T23:00:51.64"},
+      {"GroupId":13,"Description":"Group 3","UserId":9,"CreateDate":"2018-05-05T23:00:51.64"}
+    ]
+  }
+  ```
+  
+  ##### JSON sent from meta.put(obj) call to /api/items
+```json
+{"Description":"Item new","GroupId":"11","IsComplete":true,"ItemId":"20"}
+  ```
