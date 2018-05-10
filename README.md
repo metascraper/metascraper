@@ -114,10 +114,10 @@ meta.ready(
 ```json
 {"Items":
   [
-    {"ItemId":19,"Description":"Item 1","IsComplete":true,"GroupId":12,"Group":"Group 4","CreateDate":"2018-05-04T23:00:51.713","UserId":0,"Username":null},
-    {"ItemId":20,"Description":"Item 2","IsComplete":false,"GroupId":13,"Group":"Group 3","CreateDate":"2018-05-05T23:00:51.713","UserId":0,"Username":null},
-    {"ItemId":21,"Description":"Item 3","IsComplete":false,"GroupId":12,"Group":"Group 4","CreateDate":"2018-05-06T23:00:51.713","UserId":0,"Username":null},
-    {"ItemId":22,"Description":"Item 4","IsComplete":true,"GroupId":11,"Group":"Group 1","CreateDate":"2018-05-03T23:00:51.713","UserId":0,"Username":null}
+    {"ItemId":19,"Description":"Item 1","IsComplete":true,"GroupId":12,"Group":"Group 4","CreateDate":"2018-05-04T23:00:51.713"},
+    {"ItemId":20,"Description":"Item 2","IsComplete":false,"GroupId":13,"Group":"Group 3","CreateDate":"2018-05-05T23:00:51.713"},
+    {"ItemId":21,"Description":"Item 3","IsComplete":false,"GroupId":12,"Group":"Group 4","CreateDate":"2018-05-06T23:00:51.713"},
+    {"ItemId":22,"Description":"Item 4","IsComplete":true,"GroupId":11,"Group":"Group 1","CreateDate":"2018-05-03T23:00:51.713"}
   ]
 }
 ```
