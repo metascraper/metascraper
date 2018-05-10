@@ -15,6 +15,8 @@ Metascraper is designed with one principal in mind - reducing redundant code in 
     - retrieve and store your security token
     - redirect to another page
     - apply token to all future 'meta.xxx()' calls.
+    
+  - Load headers, footers, and other DOM elements using `meta.loadHeader(obj)`, `meta.loadFooter(obj)`, and `meta.load(obj)`
   
 ### Example:
 ##### login.html
@@ -55,5 +57,56 @@ function loginClicked() {
 ##### JSON sent to server
 ```json
 {"username":"someuser","password":"somepass"}
+```
+
+##### item-list.htm
+```html
+<h3>Item List</h3>
+<table data-array="Items" data-value="ItemId">
+    <thead>
+        <tr>
+            <th data-text="Description" data-href="../item-detail/item-detail.htm?itemId={{*index}}">
+                Name
+            </th>
+            <th data-text="CreateDate" data-type="date">
+                Created Date
+            </th>
+            <th data-text="Group">
+                Group
+            </th>
+            <th data-text="IsComplete">
+                Completed
+            </th>
+        </tr>
+    </thead>
+</table>
+<div id="divMessage" style="color: red"></div>
+<a href="../item-detail/item-detail.htm" class="createNew">Create New</a>
+```
+
+##### item-list.js
+```javascript
+function initPage() {
+    meta.loadHeader({
+        url: '../header/header.htm',
+        success: function (data) {
+            active(navItem);
+        }
+    });
+
+    var params = {
+        url: 'http://localhost:49723/api/items',
+        error: function (xhr, textStatus, errorThrown) {
+            divMessage.innerHTML = "An Error Occurred";
+        }
+    };
+    meta.get(params);
+};
+
+meta.ready(
+    function () {
+        initPage();
+    }
+);
 ```
 
