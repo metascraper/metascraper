@@ -90,12 +90,12 @@ function initPage() {
     meta.loadHeader({
         url: '../header/header.htm',
         success: function (data) {
-            active(navItem);
+            navItem.className = "active";
         }
     });
 
     var params = {
-        url: 'http://localhost:49723/api/items',
+        url: 'http://www.yourserver.com/api/items',
         error: function (xhr, textStatus, errorThrown) {
             divMessage.innerHTML = "An Error Occurred";
         }
