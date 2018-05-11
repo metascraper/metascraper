@@ -1,0 +1,9 @@
+﻿tr:hover {
+    background-color: #d0d0d0;
+}
+td {
+    cursor: pointer;
+}
+#divDetails {
+    padding-top: 24px;
+}

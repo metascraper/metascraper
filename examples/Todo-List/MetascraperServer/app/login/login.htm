@@ -1,0 +1,103 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+
+    <link href="../styles/global.css" rel="stylesheet" />
+    <link href="login.css" rel="stylesheet" />
+
+    <script src="../scripts/vendor/jquery-3.3.1/jquery-3.3.1.min.js"></script>
+    <script src="../scripts/vendor/metascraper-0.6.2/metascraper-0.6.2.js"></script>
+    <script src="../scripts/global.js"></script>
+    <script src="login.js"></script>
+</head>
+<body>
+
+    <div class="well">
+        <h2>Metascraper Example - App</h2>
+        <p>Hello,</p>
+        <p>Thank you for choosing Metascraper</p>
+        <p>
+            This example project contains both an app and a server. Both will need to be running for this example to work.
+            You should see another browser tab or window displaying
+            <b>Metascraper Example - Server</b>.
+            Please see
+            <a href="https://msdn.microsoft.com/en-us/library/ms165413.aspx" target="_blank">this link</a>
+            if you need assistance setting multiple startup projects.
+        </p>
+        <p>
+            <b>Next Steps:</b>
+            Scroll down to see the Javascript and HTML and some additional comments. Once you are ready to login, you can
+            create your own account by choosing Sign Up, or you can login using Username <b>user</b> and Password <b>pass</b>
+        </p>
+        <p>Team Metascraper</p>
+        <p><b></b></p>
+    </div>
+
+
+    <div id="divLogin">
+        <h3>login</h3>
+
+        <p>login by entering your credentials. </p>
+        <div>
+            <input type="text" data-value="username" placeholder="username" />
+        </div>
+        <div>
+            <input type="password" data-value="password" placeholder="password" />
+        </div>
+        <div id="divLoginFailed" class="error hidden">Login failed. Please try again.</div>
+        <button onclick="loginClicked()">login</button>
+        <a href="../signup/signup.htm">sign up</a>
+    </div>
+
+    <div id="divHtml">
+        <b>Html:</b>
+        <pre>
+&lt;h3>login&lt;/h3>
+&lt;p>login by entering your credentials. &lt;/p>
+&lt;div>
+    &lt;input type="text" <b>data-value="username"</b> placeholder="username" />
+&lt;/div>
+&lt;div>
+    &lt;input type="password" <b>data-value="password"</b> placeholder="password" />
+&lt;/div>
+&lt;div id="divLoginFailed" class="error hidden">Login failed. Please try again.&lt;/div>
+&lt;button onclick="loginClicked()">login&lt;/button>
+&lt;a href="../signup/signup.htm">sign up&lt;/a>
+</pre>
+    </div>
+
+    <div id="divJs">
+        <b>Javascript:</b>
+        <pre>
+function loginClicked() {
+    var params = {
+        url: 'http://localhost:49723/api/auth',
+        //withCredentials: true,      // CORS
+        success: function (data) {
+            location.href = '../item-list/item-list.htm';
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            show(divLoginFailed);
+        }
+    };
+    <b>meta.login(params);</b>
+}
+</pre>
+    </div>
+
+    <div id="divComments">
+        <b>Comments:</b>
+        <p>
+            There is a lot that goes into user login.
+            You need to send the user name and password to the server, wait for and handle the response.
+            If the credentials fail, you need to let the user know.
+            If the credentials are valid, you likely have been supplied a token that you need to save for the secured pages, then redirect the user to a page.
+            <br /><span class="code">meta.login()</span> handles all of this for you.
+        </p>
+
+    </div>
+
+</body>
+</html>

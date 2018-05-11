@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    
+    <link href="../styles/global.css" rel="stylesheet" />
+    <link href="signup.css" rel="stylesheet" />
+    
+    <script src="../scripts/vendor/jquery-3.3.1/jquery-3.3.1.min.js"></script>
+    <script src="../scripts/vendor/metascraper-0.6.2/metascraper-0.6.2.js"></script>
+    <script src="signup.js"></script>
+</head>
+<body>
+
+    <h3>Sign Up</h3>
+    Create a new user by entering a Username and Password:
+    <div>
+        <input type="text" data-value="username" placeholder="username" />
+    </div>
+    <div>
+        <input type="password" data-value="password" placeholder="password" />
+    </div>
+    <div id="divLoginFailed" class="error hidden">Login failed. Please try again.</div>
+    <button onclick="signupClicked()">Sign Up</button>
+    <button onclick="cancelClicked()">Cancel</button>
+
+</body>
+</html>

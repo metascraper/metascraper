@@ -1,0 +1,15 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Metascraper Example</title>
+    <meta charset="utf-8" />
+    <script type="text/javascript">
+        location.href = 'app/login/login.htm';
+    </script>
+</head>
+<body>
+
+    Redirecting... Click <a href="app/login/login.htm">here</a> if you have waited more than 3 seconds.
+    
+</body>
+</html>

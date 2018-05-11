@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    
+    <link href="../styles/global.css" rel="stylesheet" />
+    <link href="item-list.css" rel="stylesheet" />
+    
+    <script src="../scripts/vendor/jquery-3.3.1/jquery-3.3.1.min.js"></script>
+    <script src="../scripts/vendor/metascraper-0.6.2/metascraper-0.6.2.js"></script>
+    <script src="../scripts/global.js"></script>
+    <script src="item-list.js"></script>
+
+</head>
+<body>
+
+    <h3>Item List</h3>
+    <table data-array="Items" data-value="ItemId">
+        <thead>
+            <tr>
+                <th data-text="Description" data-href="../item-detail/item-detail.htm?itemId={{*index}}">
+                    Name
+                </th>
+                <th data-text="CreateDate" data-type="date">
+                    Created Date
+                </th>
+                <th data-text="Group">
+                    Group
+                </th>
+                <th data-text="IsComplete">
+                    Completed
+                </th>
+            </tr>
+        </thead>
+    </table>
+    <div id="divMessage" style="color: red"></div>
+    <a href="../item-detail/item-detail.htm" class="createNew">Create New</a>
+
+</body>
+</html>

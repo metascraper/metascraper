@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+
+    <link href="../styles/global.css" rel="stylesheet" />
+    <link href="group-list.css" rel="stylesheet" />
+
+    <script src="../scripts/vendor/jquery-3.3.1/jquery-3.3.1.min.js"></script>
+    <script src="../scripts/vendor/metascraper-0.6.2/metascraper-0.6.2.js"></script>
+    <script src="../scripts/global.js"></script>
+    <script src="group-list.js"></script>
+
+</head>
+<body>
+
+    <h3>Group List</h3>
+    <table id="tblGroups" data-array="Groups" data-value="GroupId">
+        <thead>
+            <tr data-click="rowClicked({{*index}})">
+                <th data-text="Description">
+                    Name
+                </th>
+                <th data-text="CreateDate" data-type="datetime">
+                    Created Date
+                </th>
+            </tr>
+        </thead>
+    </table>
+    <div id="divMessage" style="color: red"></div>
+
+    <div id="divDetails">
+        <h3>
+            Group Detail
+        </h3>
+        <div>
+            <label>
+                Original Value
+            </label>
+            <span data-value="Description" data-member="Group" />
+        </div>
+        <div>
+            <label>
+                Description
+            </label>
+            <input id="txtDescription" type="text" data-value="Description" data-member="Group" />
+        </div>
+        <input type="hidden" id="hdnGroupId" data-value="GroupId" data-member="Group" value="0" />
+
+        <button onclick="newClick()">Create New</button>
+        <button id="btnSave" onclick="saveClick()" class="hidden">Save</button>
+        <button id="btnDelete" onclick="deleteClick()" class="hidden">Delete</button>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+
+    <link href="../styles/global.css" rel="stylesheet" />
+    <link href="item-detail.css" rel="stylesheet" />
+
+    <script src="../scripts/vendor/jquery-3.3.1/jquery-3.3.1.min.js"></script>
+    <script src="../scripts/vendor/metascraper-0.6.2/metascraper-0.6.2.js"></script>
+    <script src="../scripts/global.js"></script>
+    <script src="item-detail.js"></script>
+
+</head>
+<body>
+
+    <h3>
+        Item Detail
+    </h3>
+    <div>
+        <label>
+            Description
+        </label>
+        <input type="text" data-value="Description" data-member="Item" />
+    </div>
+    
+    <div>
+        <label>
+            Group
+        </label>
+        <select data-value="GroupId" data-array="Groups" data-member="Item"
+                data-text="Description">
+            <option value="" selected>Unassigned</option>
+        </select>
+    </div>
+
+    <div>
+        <label>
+            Completed
+        </label>
+        <input type="checkbox" data-value="IsComplete" data-member="Item" />
+    </div>
+
+    <div>
+        <label>
+            Created Date
+        </label>
+        <span data-value="CreateDate" data-type="date" data-member="Item" data-scrape="false" ></span>
+    </div>
+    <input type="hidden" id="hdnItemId" data-value="ItemId" data-member="Item" value="0" />
+
+    <div id="divMessage" style="color: red" ></div>
+    <button onclick="saveClick()">Save</button>
+    <button id="btnDelete" onclick="deleteClick()" class="none">Delete</button>
+    <a href="../item-list/item-list.htm">Cancel</a>
+
+
+</body>
+</html>
