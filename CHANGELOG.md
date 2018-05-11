@@ -7,5 +7,5 @@ This is a maintenance release. The following items were fixed and/or added:
 
 **Metascraper 0.6.1** (released May 04 2018)
 
-Initial Release
+Alpha Release
 
