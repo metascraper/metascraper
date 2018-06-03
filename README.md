@@ -25,7 +25,7 @@ Metascraper is designed with one principal in mind - reducing redundant code in 
 
 **get** `meta.get(options)` 
 
-(get/read) calls `.recieve()` using GET. same as `.read()`
+(get/read) calls `.receive()` using GET. same as `.read()`
 
 **post** `meta.post(options)` 
 
@@ -45,7 +45,7 @@ Metascraper is designed with one principal in mind - reducing redundant code in 
 
 **read** `meta.read(options) `
 
-(get/read) calls `.recieve()` using GET. same as `.get()`
+(get/read) calls `.receive()` using GET. same as `.get()`
 
 **update** `meta.update(options)` 
 
@@ -55,7 +55,7 @@ Metascraper is designed with one principal in mind - reducing redundant code in 
 
 scrapes the page as json and sends resulting data to a REST url. Will add the Authorization header if token is available.
 
-**recieve** `meta.recieve(options)`
+**receive** `meta.recieve(options)`
 
 retrieves JSON data from a REST url and binds the data to the page. Will add the Authorization header if token is available.
 
