@@ -200,7 +200,6 @@ compares versions returning true is version >= requiredVersion
 ```javascript
 // all of these will return true
 var isValid = meta.versionCheck(2, 1); 
-isValid = meta.versionCheck(2.4, 2.337);
 isValid = meta.versionCheck('2.3.5', '2.3.4');
 isValid = meta.versionCheck('2.0', '1.9.9.9.9'); 
 isValid = meta.versionCheck('2.3.4.5.6', '2.3.4.5'); 
