@@ -191,7 +191,7 @@ saves any value to storage with different types of expiration. type defaults to 
 
 **unique** `meta.unique()`
 
-returns a unique number, not secure (yet)
+returns a unique number, not secure
 
 **versionCheck** `meta.versionCheck(version, requiredVersion)`
 
