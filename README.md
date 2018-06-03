@@ -186,43 +186,13 @@ saves any value to storage with different types of expiration. type defaults to 
     }),
 ```
 
-
 ## utility functions
-
-**unique** `meta.unique()`
-
-returns a unique number, not secure
-
-**versionCheck** `meta.versionCheck(version, requiredVersion)`
-
-compares versions returning true is version >= requiredVersion
-
-```javascript
-// all of these will return true
-var isValid = meta.versionCheck(2, 1); 
-isValid = meta.versionCheck('2.3.5', '2.3.4');
-isValid = meta.versionCheck('2.0', '1.9.9.9.9'); 
-isValid = meta.versionCheck('2.3.4.5.6', '2.3.4.5'); 
-isValid = meta.versionCheck('3', '2.3.4.7.8.9'); 
-```
 
 **copy** `meta.copy(src)`
 
 makes a copy of whatever you throw at it, even functions. all objects (json, array, html) are deep copies. 
 value copy - null, undefined, number, string, date
 deep copy - json, array, array of json, html node or element
-
-**toString** `meta.toString(src)`
-
-returns a common sense string of whatever you throw at it, such as bools, null, Arrays, JSON, NodeList 
-
-**ready** `meta.ready(f)` 
-
-calls function `f()` after DOM is loaded
-
-**parseHTML** `meta.parseHTML(html, context)`
-
-converts html string into DOM element(s)
 
 **extend** `meta.extend(target, src)`
 
@@ -245,6 +215,14 @@ safe function to get an attribute of an element. returns empty string ('') if an
 **getUrlParam** `meta.getUrlParam(name, url)`
 
 gets a querystring value from a url. url is optional - uses current location if not specified
+	
+**parseHTML** `meta.parseHTML(html, context)`
+
+converts html string into DOM element(s)
+
+**ready** `meta.ready(f)` 
+
+calls function `f()` after DOM is loaded
 
 **select** `meta.select(options)`
 
@@ -260,6 +238,27 @@ var all_divs_with_error_or_popup_class       = meta.selectAll("div.error, div.po
 var all_divs_inside_p_with_class_error       = meta.selectAll("div.error > p");
 var all_spans_with_attr_data-src             = meta.selectAll("span[data-src]");
 var all_inputs_with_attr_data-active_equal_1 = meta.selectAll("input[data-active=1]");
+```
+
+**toString** `meta.toString(src)`
+
+returns a common sense string of whatever you throw at it, such as bools, null, Arrays, JSON, NodeList 
+
+**unique** `meta.unique()`
+
+returns a unique number
+
+**versionCheck** `meta.versionCheck(version, requiredVersion)`
+
+compares versions returning true is version >= requiredVersion
+
+```javascript
+// all of these will return true
+var isValid = meta.versionCheck(2, 1); 
+isValid = meta.versionCheck('2.3.5', '2.3.4');
+isValid = meta.versionCheck('2.0', '1.9.9.9.9'); 
+isValid = meta.versionCheck('2.3.4.5.6', '2.3.4.5'); 
+isValid = meta.versionCheck('3', '2.3.4.7.8.9'); 
 ```
 
 [Next >>](https://github.com/metascraper/metascraper/wiki).
