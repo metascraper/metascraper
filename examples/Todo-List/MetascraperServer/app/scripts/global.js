@@ -28,5 +28,6 @@ function active(elem) {
 }
 
 function logout() {
+    meta.logout();
     location.href = "../login/login.htm";
 }
