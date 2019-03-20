@@ -12,7 +12,7 @@
 var meta = {
 
     projectName: "Metascraper",
-    version: "1.0.0",
+    version: "0.8.0",
 
     modes: {
         developer: 0,
