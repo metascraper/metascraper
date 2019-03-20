@@ -51,7 +51,7 @@ Metascraper is designed with one principal in mind - reducing redundant code in 
 
 (put/update) calls `.send()` using PUT. same as `.put()`
 
-:new: **save** `meta.save(options)`
+**save** `meta.save(options)` :new:
 
 (put/update post/create) easy save. calls create or update based on primary key having value
 
@@ -67,13 +67,13 @@ retrieves JSON data from a REST url and binds the data to the page. Will add the
 
 makes an http call to a REST servive. 
 
-:new: **ajaxSetup** `meta.ajaxSetup = { keys: values };
+**ajaxSetup** `meta.ajaxSetup = { keys: values }; :new:
 
 gets/sets key-value pairs that can be sent with every ajax call. 
 
 ## security functions :
 
-:new: **authorize** `meta.authorize(options)`
+**authorize** `meta.authorize(options)` :new: 
 
 verifies user has a valid token, returns true/false
 
@@ -180,13 +180,13 @@ dynamically loads an html file to any element. does not support script files
     }),
 ```
 
-:new: **loadScript** `meta.loadScript(opts)` 
+**loadScript** `meta.loadScript(opts)` :new: 
 
 dynamically loads a script file
 
 ## data storage functions
 
-:new: **data** `meta.data(name)`
+**data** `meta.data(name)` :new: 
 
 access data responses from ajax calls when user sets key property
 
@@ -212,15 +212,15 @@ saves any value to storage with different types of expiration. type defaults to 
 
 ## json functions
 
-:new: **isJson** `meta.isJson(json)`
+**isJson** `meta.isJson(json)` :new: 
 
 determines if the value is a json object
 
-:new: **tryParseJsonObject** `meta.tryParseJsonObject(jsonString)`
+**tryParseJsonObject** `meta.tryParseJsonObject(jsonString)` :new: 
 
 safe json parse, returns false if parse fails
 
-:new: **eachJsonKey** `meta.eachJsonKey(json, f)`
+**eachJsonKey** `meta.eachJsonKey(json, f)` :new:
 
 loops through all keys of json and calls f(key, value) for each item 
 
@@ -234,7 +234,7 @@ filters a json array to where a key matches a value
 
 ## utility functions
 
-:new: **async** `meta.async(f, options)`
+**async** `meta.async(f, options)` :new: 
 
 executes a function asyncronously
 
@@ -259,11 +259,11 @@ safe function to get an attribute of an element. returns empty string ('') if an
 
 gets a querystring value from a url. url is optional - uses current location if not specified
 	
-:new: **isNullOrUndefined** `meta.isNullOrUndefined(name, url)`
+**isNullOrUndefined** `meta.isNullOrUndefined(name, url)` :new:
 
 returns true if value is null or undefined, false otherwise	
 
-:new: **log** `meta.log(funcName, description, mode)`
+**log** `meta.log(funcName, description, mode)` :new:
 
 console logging
 
