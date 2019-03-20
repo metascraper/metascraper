@@ -13,10 +13,14 @@
         }
     };
     meta.get(params);
-};
+}
 
-meta.ready(
-    function () {
-        initPage();
-    }
-);
+
+//you could also do:
+//meta.ready(  
+//    function () {
+//        initPage();
+//    }
+//);
+meta.ready(initPage);
+

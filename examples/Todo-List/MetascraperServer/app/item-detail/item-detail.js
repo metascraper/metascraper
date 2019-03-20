@@ -3,6 +3,7 @@
 function saveClick() {
     var o = {
         url: itemsUrl,
+        pk: "ItemId",   // set pk to the primary key to allow meta.save to work
         success: function (data) {
             location.href = "../item-list/item-list.htm";
         },
@@ -10,10 +11,7 @@ function saveClick() {
             divMessage.innerText = "An Error Occurred. Please Try Again.";
         }
     };
-    if (hdnItemId.value === "0")
-        meta.post(o);
-    else
-        meta.put(o);
+    meta.save(o);  //  one call handles both create and update
 }
 
 function deleteClick() {
@@ -51,12 +49,6 @@ function initPage() {
         }
     };
     meta.get(o);
-
-    
 }
 
-meta.ready(
-    function () {
-        initPage();
-    }
-);
+meta.ready(initPage);

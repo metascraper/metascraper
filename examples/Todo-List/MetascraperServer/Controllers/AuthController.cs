@@ -10,18 +10,30 @@ using System.Web.Http;
 
 namespace MetascraperServer.Controllers
 {
-    public class AuthController : ApiController
+    public class UserController : ApiController
     {
         [AllowAnonymous]
-        public HttpResponseMessage Post([FromBody] LoginRequest credentials)
+        [Route("api/User/Login")]
+        public HttpResponseMessage Login([FromBody] LoginRequest credentials)
         {
-            var authRepo = new AuthRepository();
+            var userRepo = new UserRepository();
             UserToken token;
-            if (!authRepo.TryLogin(credentials, out token))
+            if (!userRepo.TryLogin(credentials, out token))
                 return new HttpResponseMessage(HttpStatusCode.Unauthorized);
 
-            var loginResp = new LoginResponse() { token = token.Encode() };
+            var loginResp = new LoginResponse() { Token = token.Encode() };
             return Request.CreateResponse(HttpStatusCode.OK, loginResp);
+        }
+
+        [AllowAnonymous]
+        [Route("api/User/Signup")]
+        public HttpResponseMessage Signup([FromBody] LoginRequest credentials)
+        {
+            var userRepo = new UserRepository();
+            if (!userRepo.Signup(credentials))
+                return new HttpResponseMessage(HttpStatusCode.Forbidden);
+
+            return Request.CreateResponse(HttpStatusCode.OK);
         }
     }
 }

@@ -51,6 +51,10 @@ Metascraper is designed with one principal in mind - reducing redundant code in 
 
 (put/update) calls `.send()` using PUT. same as `.put()`
 
+:new: **save** `meta.save(options)`
+
+(put/update post/create) easy save. calls create or update based on primary key having value
+
 **send** `meta.send(options)`
 
 scrapes the page as json and sends resulting data to a REST url. Will add the Authorization header if token is available.
@@ -63,11 +67,23 @@ retrieves JSON data from a REST url and binds the data to the page. Will add the
 
 makes an http call to a REST servive. 
 
+:new: **ajaxSetup** `meta.ajaxSetup = { keys: values };
+
+gets/sets key-value pairs that can be sent with every ajax call. 
+
 ## security functions :
+
+:new: **authorize** `meta.authorize(options)`
+
+verifies user has a valid token, returns true/false
 
 **login** `meta.login(options)` 
 
 automates a login by scraping a standard username/password login page, and does a POST to your authentication method. expects a JSON response that includes element called token `{ token: **token**, ... }`
+
+**logout** `meta.logout(options)` 
+
+secure logout, removes token
 
 **token** `meta.token()`
 
@@ -164,7 +180,15 @@ dynamically loads an html file to any element. does not support script files
     }),
 ```
 
+:new: **loadScript** `meta.loadScript(opts)` 
+
+dynamically loads a script file
+
 ## data storage functions
+
+:new: **data** `meta.data(name)`
+
+access data responses from ajax calls when user sets key property
 
 **store_get** `meta.store_get(name)`
 
@@ -186,7 +210,33 @@ saves any value to storage with different types of expiration. type defaults to 
     }),
 ```
 
+## json functions
+
+:new: **isJson** `meta.isJson(json)`
+
+determines if the value is a json object
+
+:new: **tryParseJsonObject** `meta.tryParseJsonObject(jsonString)`
+
+safe json parse, returns false if parse fails
+
+:new: **eachJsonKey** `meta.eachJsonKey(json, f)`
+
+loops through all keys of json and calls f(key, value) for each item 
+
+**filter** `meta.filter(jsonArray, key, value, first)`
+
+filters a json array to where a key matches a value
+    jsonArray: the json Array you want filtered
+    key: the key to match on
+    value: the vlaue that the key should be
+    first: true if the method returns the first found, false to return an array of eery match
+
 ## utility functions
+
+:new: **async** `meta.async(f, options)`
+
+executes a function asyncronously
 
 **copy** `meta.copy(src)`
 
@@ -200,13 +250,6 @@ adds the option of src json object to target json object.
     upon return, target will be target + src. 
     If attribute exists in both, src wins
 
-**filter** `meta.filter(jsonArray, key, value, first)`
-
-filters a json array to where a key matches a value
-    jsonArray: the json Array you want filtered
-    key: the key to match on
-    value: the vlaue that the key should be
-    first: true if the method returns the first found, false to return an array of eery match
 
 **getElemAttr** `meta.getElemAttr(elem, attrName)`
 
@@ -216,6 +259,14 @@ safe function to get an attribute of an element. returns empty string ('') if an
 
 gets a querystring value from a url. url is optional - uses current location if not specified
 	
+:new: **isNullOrUndefined** `meta.isNullOrUndefined(name, url)`
+
+returns true if value is null or undefined, false otherwise	
+
+:new: **log** `meta.log(funcName, description, mode)`
+
+console logging
+
 **parseHTML** `meta.parseHTML(html, context)`
 
 converts html string into DOM element(s)
