@@ -31,3 +31,8 @@ function logout() {
     meta.logout();
     location.href = "../login/login.htm";
 }
+
+// dynamically load global css file on all pages
+meta.loadStyleSheet({
+    url: "../styles/global.css"
+});

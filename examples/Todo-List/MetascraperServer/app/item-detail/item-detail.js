@@ -30,14 +30,12 @@ function deleteClick() {
     meta.del(o);
 }
 
-function initPage() {
-    meta.loadHeader({
-        url: '../header/header.htm',
-        success: function (data) {
-            active(navItem);
-        }
-    });
+// headerLoaded is called from global.loggedIn.js
+function headerLoaded() {
+    active(navItem);
+}
 
+function initPage() {
     var itemId = meta.getUrlParam('itemId') || "0";
     if (itemId) {
         btnDelete.classList.remove('none');

@@ -1,11 +1,5 @@
-﻿function initPage() {
-    meta.loadHeader({
-        url: '../header/header.htm',
-        success: function (data) {
-            active(navItem);
-        }
-    });
-
+﻿
+function initPage() {
     var params = {
         url: 'http://localhost:49723/api/items',
         error: function (xhr, textStatus, errorThrown) {
@@ -15,6 +9,10 @@
     meta.get(params);
 }
 
+// headerLoaded is called from global.loggedIn.js
+function headerLoaded() {
+    active(navItem);
+}
 
 //you could also do:
 //meta.ready(  

@@ -1,18 +1,18 @@
 ﻿/*!
- * Metascraper JavaScript Library v0.8.0
+ * Metascraper JavaScript Library v1.0.0
  * https://metascraper.com/
  *
  * Copyright Metascraper
  * Released under the MIT license
  * https://en.wikipedia.org/wiki/MIT_License
  *
- * Date: 2019-03-19T12:34Z
+ * Date: 2019-04-08T12:34Z
  */
 
 var meta = {
 
     projectName: "Metascraper",
-    version: "0.8.0",
+    version: "1.0.0",
 
     modes: {
         developer: 0,
@@ -706,6 +706,10 @@ var meta = {
     // meta.loadScript(o);
     //
     loadScript: function (opts) {
+        if (meta.isNullOrUndefined(opts.url)) {
+            meta.log('metascraper::loadScript', 'unable to find required attribute [url]', meta.modes.error);
+        }
+
         var success = opts.success;
         var o = {
             method: "GET"
@@ -720,6 +724,87 @@ var meta = {
                 success(data, textStatus, jqXHR);
         };
         meta.ajax(o);
+    },
+
+    // dynamically loads a file to a <link> element
+    // NOTE: see loadStyleSheet(opts) for a quick easy method to dynamically load a css stylesheet file
+    // example (load favicon.ico):
+    // var o = {
+    //   rel: "icon",
+    //   type: "image/x-icon",
+    //   url: "favicon.ico"
+    // }
+    // meta.loadLinkFile(o);
+    // ************************
+    // other examples:
+    // meta.loadLinkFile({
+    //   rel: "preload",
+    //   url: "myFont.woff2",
+    //   as:  "font",
+    //   type: "font/woff2",
+    //   crossorigin: "anonymous"
+    // });
+    // ***********************
+    // meta.loadLinkFile({
+    //   rel: "apple-touch-icon-precomposed",
+    //   url: "favicon144.png",
+    //   type: "image/png",
+    //   sizes: "144x144"
+    // });
+    //
+    loadLinkFile: function (opts) {
+        if (meta.isNullOrUndefined(opts.rel)) {
+            meta.log('metascraper::loadLinkFile', 'unable to find required attribute [rel]', meta.modes.error);
+        }
+        if (meta.isNullOrUndefined(opts.type)) {
+            meta.log('metascraper::loadLinkFile', 'unable to find required attribute [type]', meta.modes.error);
+        }
+        if (meta.isNullOrUndefined(opts.url)) {
+            meta.log('metascraper::loadLinkFile', 'unable to find required attribute [url]', meta.modes.error);
+        }
+
+        var link = document.createElement("link");
+
+        if (link.readyState) {  //IE
+            link.onreadystatechange = function () {
+                if (link.readyState === "loaded" ||
+                    link.readyState === "complete") {
+                    link.onreadystatechange = null;
+                    if (opts.success) {
+                        opts.success();
+                    }
+                }
+            };
+        } else {  //Others
+            link.onload = function () {
+                if (opts.success) {
+                    opts.success();
+                }
+            };
+        }
+
+        meta.extend(link, opts);
+        link.href = opts.url;   // metascraper uses url, link uses href.
+
+        document.getElementsByTagName("head")[0].appendChild(link);
+    },
+
+    // dynamically loads a css stylesheet file
+    // NOTE: see loadLinkFile for a powerful method to dynamically load a <link> file
+    // example:
+    // var o = {
+    //   url: "http://www.yourServer.com/cssFile.css",
+    //   media="screen and (min-width: 600px)"      /* OPTIONAL */
+    // };
+    // meta.loadStyleSheet(o);
+    //
+    loadStyleSheet: function (opts) {
+        var o = {
+            rel: "stylesheet",
+            type: "text/css"
+        };
+        meta.extend(o, opts);
+        meta.loadLinkFile(o);
     },
 
     // START store functions
@@ -1164,7 +1249,7 @@ var meta = {
                             responseData = xhr.response;
                         }
                         if (options.key.length > 0) {
-							meta.data[options.key] = responseData;
+                            meta.data[options.key] = responseData;
                         }
                         options.success(responseData, xhr.statusText, xhr);
                     }

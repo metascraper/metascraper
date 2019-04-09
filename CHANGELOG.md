@@ -1,3 +1,12 @@
+**Metascraper 1.0.0** (released April 09 2019)
+This is a major update. The following major new features were added: 
+* meta.loadLinkFile: dynamically loads a file to a <link> element
+* meta.loadStyleSheet: dynamically loads a css stylesheet file
+
+In addition, the following items were fixed and/or added: 
+* meta.loadScript: logging when required attribute [url] is missing
+
+
 **Metascraper 0.8.0** (released March 14 2019)
 This is a major update. The following major new features were added: 
 * meta.modes: enum used for logging severity

@@ -72,13 +72,11 @@ function refreshData() {
     hide(btnDelete);
 }
 
-meta.ready(function () {
-    meta.loadHeader({
-        url: '../header/header.htm',
-        success: function (data) {
-            active(navGroup);
-        }
-    });
+// headerLoaded is called from global.loggedIn.js
+function headerLoaded() {
+    active(navGroup);
+}
 
+meta.ready(function () {
     refreshData();
 });
