@@ -1,0 +1,87 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Metascraper - Playground</title>
+    <script src="./scripts/vendor/metascraper-1.1.0/metascraper-1.1.0.js"></script>
+    <script>
+
+        function execute_click() {
+            // cleat the output 
+            //returnbox.value = "";
+            output.innerHTML = "";
+            var ret = "";
+            try {
+                // execute the code
+                var code = meta.getValue(codebox);
+                var func = new Function(code);
+                ret = func();
+            } catch (e) {
+                // error
+                ret = { ERROR: e.name , Number: e.number, Description: e.description, message: e.message };
+                ret = meta.toString(ret);
+            }
+            if (ret) console.log(ret);
+
+        }
+
+        meta.ready(function () {
+            // override console to display on screen
+            var console = {};
+            console.log = function (val) {
+                //returnbox.value += val + '\n';
+                output.innerHTML += val + '<br/>'
+            };
+            window.console = console;
+
+            // show metascraper version
+            var data = { metaVersion: meta.version }
+            meta.paint(data);
+        });
+
+    </script>
+
+</head>
+<body>
+
+    <div>
+        Playground - Metascraper v<span data-value="metaVersion"></span> 
+    </div>
+    
+        <div>
+            <textarea id="codebox" rows="20" cols="100">
+var str1 = "my test.asp?name=ståle&car=saab"
+console.log("**" + str1 + "**");
+console.log("-------------------------------------------------------------------------------");
+console.log('url: ' + meta.encode(str1, meta.encodeTypes.url));
+console.log('urlParamter: ' + meta.encode(str1, meta.encodeTypes.urlParameter));
+console.log('utf16: ' + meta.encode(str1, meta.encodeTypes.utf16));
+console.log('base64 (default): ' + meta.encode(str2));
+
+
+var str2 = "hello 我一个人来";
+console.log("");
+console.log(str2);
+console.log("-------------------------------------------------------------------------------");
+console.log('url: ' + meta.encode(str2, meta.encodeTypes.url));
+console.log('urlParamter: ' + meta.encode(str2, meta.encodeTypes.urlParameter));
+console.log('utf16: ' + meta.encode(str2, meta.encodeTypes.utf16));
+console.log('base64 (default): ERROR'); //+ meta.encode(str2));
+console.log("");
+
+return "done..."
+            </textarea>
+        </div>
+    <div>
+        <button onclick="execute_click()">Execute</button>
+    </div>
+
+    <hr />
+    Output:
+    <div id="output">
+        <!--<textarea id="returnbox" rows="7" cols="100">
+            
+        </textarea>-->
+    </div>
+
+</body>
+</html>

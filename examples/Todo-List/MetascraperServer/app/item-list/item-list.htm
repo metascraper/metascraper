@@ -6,7 +6,7 @@
     
     <link href="item-list.css" rel="stylesheet" />
     
-    <script src="../scripts/vendor/metascraper-1.0.0/metascraper-1.0.0.js"></script>
+    <script src="../scripts/vendor/metascraper-1.1.0/metascraper-1.1.0.js"></script>
     <script src="../scripts/global.loggedin.js"></script>
     <script src="item-list.js"></script>
 
@@ -17,7 +17,7 @@
     <table data-array="Items" data-value="ItemId">
         <thead>
             <tr>
-                <th data-text="Description" data-href="../item-detail/item-detail.htm?itemId={{*index}}">
+                <th data-text="Description" data-href="../item-detail/item-detail.htm?itemId={{*data-value}}">
                     Name
                 </th>
                 <th data-text="CreateDate" data-type="date">

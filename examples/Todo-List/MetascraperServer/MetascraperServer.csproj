@@ -110,7 +110,7 @@
     <Content Include="app\login\login.js" />
     <Content Include="app\scripts\global.js" />
     <Content Include="app\scripts\global.loggedin.js" />
-    <Content Include="app\scripts\vendor\metascraper-1.0.0\metascraper-1.0.0.js" />
+    <Content Include="app\scripts\vendor\metascraper-1.1.0\metascraper-1.1.0.js" />
     <Content Include="app\signup\signup.css" />
     <Content Include="app\signup\signup.htm" />
     <Content Include="app\signup\signup.js" />

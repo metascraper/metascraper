@@ -1,18 +1,18 @@
 ﻿/*!
- * Metascraper JavaScript Library v1.0.0
+ * Metascraper JavaScript Library v1.1.0
  * https://metascraper.com/
  *
  * Copyright Metascraper
  * Released under the MIT license
  * https://en.wikipedia.org/wiki/MIT_License
  *
- * Date: 2019-04-08T12:34Z
+ * Date: 2019-11-11T11:11Z
  */
 
 var meta = {
 
     projectName: "Metascraper",
-    version: "1.0.0",
+    version: "1.1.0",
 
     modes: {
         developer: 0,
@@ -31,14 +31,15 @@ var meta = {
         attrTypeName: "data-type",                      // type of data, used for formatting (date, string, number, json(?), etc)
         attrClassName: "data-class",                    // applies a class to a multi element, such as <td> or <tr>
         attrScrapeName: "data-scrape",                  // bool whether to scrape field, default to true
-        indexName: "{{*index}}",                        // apply the primary key to a link
+        attrKeyName: "data-key",                        // apply this field to the link
+        indexName: "{{*index}}",                        // apply the row number to a link
         tokenName: "Token",                             // name of security token in storage, used in data return value on login
         scrape: true,                                   // should it scrape the page on send?
         mode: 5
     },
 
     // enum to determine where to place loaded HTML files
-    loadTypesEnum: Object.freeze({
+    loadTypes: Object.freeze({
         Replace: 0,
         BeforeBeginAppend: 1,
         AfterBeginAppend: 2,
@@ -46,7 +47,7 @@ var meta = {
         AfterEndAppend: 4
     }),
 
-    storeTypesEnum: Object.freeze({
+    storeTypes: Object.freeze({
         ExpiryNoExtend: 1,      // extends the expiry each time it is read, 30 days from set
         ExpiryExtend: 2,        // keep until expiry is met, extending each time it is read, 30 days since last get
         OneTimeRead: 3,         // allows it to be read only once
@@ -55,7 +56,7 @@ var meta = {
     }),
 
     // enum to determine type of data expected to be in an element
-    dataTypesEnum: Object.freeze({
+    dataTypes: Object.freeze({
         date: "date",                   // 12/25/1990 or 2/15/2019
         time: "time",                   // 1:15:30 AM
         datetime: "datetime",           // 12/25/2018, 1:15:30 AM
@@ -77,6 +78,13 @@ var meta = {
         json: "json"
     }),
 
+    encodeTypes: Object.freeze({
+
+        url: "url",             		// for html safe url, note that ?=& values values will not be encoded
+        urlParameter: "urlParameter",   // for html safe url parameter, note that all unsafe values will be encoded
+        base64: "base64",       		// default - base64 encoding for html safe and file transfers
+        utf16: "utf16"          		// use utf16 encoding to handle international characters
+    }),
 
     // START - RestApi functions
 
@@ -89,9 +97,9 @@ var meta = {
         // create the page data
         var request = shouldScrape ? this.scrape(true) : {};
         if (opts.data) {
-            if (!request.data)
-                request.data = {};
-            this.extend(request.data, opts.data);
+            //if (!request.data)
+            //    request.data = {};
+            this.extend(request, opts.data);
         }
 
         // default options
@@ -126,7 +134,7 @@ var meta = {
 
         // we need to override the success piece to save the token, then do the client callback
         o.success = function (data, textStatus, jqXHR) {
-            meta.bind(data);
+            meta.bind(data, o.container);
             if (success)
                 success(data, textStatus, jqXHR);
         };
@@ -158,8 +166,12 @@ var meta = {
         this.send(d);
     },
 
-    // this had to be renamed to del, delete is a js keyword
     del: function (opts) {
+        this.log("meta.del", "**DEPRACATION WARNING** meta.del should be replaced with meta.delete", meta.modes.warning);
+        this.delete(opts);
+    },
+
+    delete: function (opts) {
         var d = { method: "DELETE" };
         this.extend(d, opts);
         this.send(d);
@@ -180,7 +192,7 @@ var meta = {
 
     // easy save. calls create or update based on primary key having value 
     // 0 is not value, -1 is
-    // set the [pk:str] property to the primary key
+    // for the magic, set the [pk:str] property to the primary key
     // 
     // opts {
     //      url: http://www.server.com/api/whatever
@@ -271,7 +283,10 @@ var meta = {
         var store = window.localStorage;
         store.removeItem(meta.options.tokenName);
         if (opts && opts.url) {
-            windows.location.href = opts.url;
+            // set the proper url (unless it is fully qualified)
+            if (opts.url.indexOf('://') === -1)     // bit of a hack, should work
+                opts.url = this.options.webApiPrefix + opts.url;
+            window.location.href = opts.url + "?r=" + encodeURIComponent(window.location.href);
         }
     },
 
@@ -286,7 +301,7 @@ var meta = {
                 return elem.checked;
             else
                 return elem.value;
-        else if (elem instanceof HTMLSelectElement)
+        else if (elem instanceof HTMLSelectElement || elem instanceof HTMLTextAreaElement)
             if (elem.multiple) {
                 var value = [];
                 var collection = elem.selectedOptions;
@@ -349,73 +364,73 @@ var meta = {
         try {
             if (elem.hasAttribute(meta.options.attrTypeName)) {
                 var type = elem.getAttribute(meta.options.attrTypeName);
-                if (type === meta.dataTypesEnum.string) {
+                if (type === meta.dataTypes.string) {
                     // do nothing
                 }
 
-                else if (type === meta.dataTypesEnum.number)
+                else if (type === meta.dataTypes.number)
                     val = new Number(val);
 
-                else if (type === meta.dataTypesEnum.date || type === meta.dataTypesEnum.time || type === meta.dataTypesEnum.datetime ||
-                    type === meta.dataTypesEnum.month || type === meta.dataTypesEnum.month1 || type === meta.dataTypesEnum.month3 ||
-                    type === meta.dataTypesEnum.monthNum || type === meta.dataTypesEnum.monthNumPad ||
-                    type === meta.dataTypesEnum.day || type === meta.dataTypesEnum.day1 || type === meta.dataTypesEnum.day2 ||
-                    type === meta.dataTypesEnum.day3 ||
-                    type === meta.dataTypesEnum.dayNum || type === meta.dataTypesEnum.dayNumPad ||
-                    type === meta.dataTypesEnum.year || type === meta.dataTypesEnum.year2
+                else if (type === meta.dataTypes.date || type === meta.dataTypes.time || type === meta.dataTypes.datetime ||
+                    type === meta.dataTypes.month || type === meta.dataTypes.month1 || type === meta.dataTypes.month3 ||
+                    type === meta.dataTypes.monthNum || type === meta.dataTypes.monthNumPad ||
+                    type === meta.dataTypes.day || type === meta.dataTypes.day1 || type === meta.dataTypes.day2 ||
+                    type === meta.dataTypes.day3 ||
+                    type === meta.dataTypes.dayNum || type === meta.dataTypes.dayNumPad ||
+                    type === meta.dataTypes.year || type === meta.dataTypes.year2
                 ) {
                     val = new Date(val);
-                    if (type === meta.dataTypesEnum.date)
+                    if (type === meta.dataTypes.date)
                         val = val.toLocaleDateString();
-                    else if (type === meta.dataTypesEnum.time)
+                    else if (type === meta.dataTypes.time)
                         val = val.toLocaleTimeString();
-                    else if (type === meta.dataTypesEnum.datetime)
+                    else if (type === meta.dataTypes.datetime)
                         val = val.toLocaleString();
-                    else if (type === meta.dataTypesEnum.month) {
+                    else if (type === meta.dataTypes.month) {
                         var monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
                         val = monthNames[val.getMonth()];
                     }
-                    else if (type === meta.dataTypesEnum.month1) {
+                    else if (type === meta.dataTypes.month1) {
                         var month1Names = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
                         val = monthNames[val.getMonth()];
                     }
-                    else if (type === meta.dataTypesEnum.month3) {
+                    else if (type === meta.dataTypes.month3) {
                         var month3Names = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
                         val = monthNames[val.getMonth()];
                     }
-                    else if (type === meta.dataTypesEnum.monthNum) {
+                    else if (type === meta.dataTypes.monthNum) {
                         val = val.getMonth() + 1;
                     }
-                    else if (type === meta.dataTypesEnum.monthNumPad) {
+                    else if (type === meta.dataTypes.monthNumPad) {
                         var month = val.getMonth() + 1;
                         val = month < 10 ? '0' + month.toString() : month.toString();
                     }
-                    else if (type === meta.dataTypesEnum.day) {
+                    else if (type === meta.dataTypes.day) {
                         var dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
                         val = dayNames[val.getDay()];
                     }
-                    else if (type === meta.dataTypesEnum.day1) {
+                    else if (type === meta.dataTypes.day1) {
                         var day1Names = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
                         val = day1Names[val.getDay()];
                     }
-                    else if (type === meta.dataTypesEnum.day2) {
+                    else if (type === meta.dataTypes.day2) {
                         var day2Names = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
                         val = day2Names[val.getDay()];
                     }
-                    else if (type === meta.dataTypesEnum.day3) {
+                    else if (type === meta.dataTypes.day3) {
                         var day3Names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                         val = day3Names[val.getDay()];
                     }
-                    else if (type === meta.dataTypesEnum.dayNum) {
+                    else if (type === meta.dataTypes.dayNum) {
                         val = val.getDate();
                     }
-                    else if (type === meta.dataTypesEnum.dayNumPad) {
+                    else if (type === meta.dataTypes.dayNumPad) {
                         var day = val.getDate();
                         val = day < 10 ? '0' + day.toString() : day.toString();
                     }
-                    else if (type === meta.dataTypesEnum.year)
+                    else if (type === meta.dataTypes.year)
                         val = val.getFullYear();
-                    else if (type === meta.dataTypesEnum.year2) {
+                    else if (type === meta.dataTypes.year2) {
                         var year = val.getFullYear();
                         if (year > -10 && year < 10) {
                             if (year < 0) {
@@ -435,7 +450,7 @@ var meta = {
                     }
                 }
 
-                else if (type === meta.dataTypesEnum.json)
+                else if (type === meta.dataTypes.json)
                     val = JSON.stringify(val);
 
             }
@@ -452,16 +467,16 @@ var meta = {
         // html select
         if (elem instanceof HTMLSelectElement)
             elem.value = val;
-        //elem.options.namedItem(val).selected = true;
+            //elem.options.namedItem(val).selected = true;
 
-        // html inputs
+            // html inputs
         else if (elem instanceof HTMLInputElement)
             if (elem.type === "checkbox")
                 elem.checked = val;
             else
                 elem.value = val;
 
-        // everything else
+            // everything else
         else
             elem.innerHTML = val;
     },
@@ -473,6 +488,9 @@ var meta = {
         var attrName = meta.options.attrName;
         var elems = this.selectAll("[" + attrName + "]", container);   // scrape
         for (var i = 0; i < elems.length; i++) {
+            // ignore populate items (has array, missing data-text)
+            if (elems[i].hasAttribute(meta.options.attrArrayName) && !elems[i].hasAttribute(meta.options.attrTextName))
+                continue;
             // set the field to json dynamically
             var value = null;
             if (elems[i].hasAttribute(meta.options.attrMemberName)) {
@@ -486,15 +504,28 @@ var meta = {
             if (!meta.isNullOrUndefined(value)) {
                 meta.setValue(elems[i], value);
             } else {
-                meta.log('metascraper::paint', 'unable to find data-value [' + elems[i].getAttribute(attrName) + ']', meta.modes.warning);
+                if (!data[member].hasOwnProperty(elems[i].getAttribute(attrName))) {
+                    meta.log('metascraper::paint', 'unable to find data-value [' + elems[i].getAttribute(attrName) + ']', meta.modes.warning);
+                }
             }
         }
     },
 
 
+
     // fills a multiple value element (select, table, list, etc) with an array of values 
     // this can be explicitly called, if the JSON is a non-named array
     fill: function (elem, data) {
+
+        function getLink(linkTemplate) {
+            var rv = linkTemplate.replace(meta.options.indexName, r + 1);
+            if (dataValue.length > 0)
+                rv = rv.replace("{{*" + meta.options.attrName + "}}", data[r][dataValue]);
+            if (rv.indexOf("{{*" + meta.options.attrKeyName + "}}") !== -1)
+                rv = rv.replace("{{*" + meta.options.attrKeyName + "}}", data[r][elem.getAttribute(meta.options.attrKeyName)]);
+            return rv;
+        }
+
         var a, linkText;
         var dataValue = elem.getAttribute(meta.options.attrName);
         // handle a select
@@ -519,9 +550,9 @@ var meta = {
             var headCells = thead.rows[0].cells; // grab the header cells
             if (this.isNullOrUndefined(headCells) || headCells.length === 0)
                 return;
-            var rowHref = meta.getElemAttr(thead.rows[0], meta.options.attrHrefName); // custom data-href
-            var rowClick = meta.getElemAttr(thead.rows[0], meta.options.attrClickName); // custom data-click           
-            var rowClass = meta.getElemAttr(thead.rows[0], meta.options.attrClassName); // custom data-class
+            var rowHref = meta.attr(thead.rows[0], meta.options.attrHrefName); // custom data-href
+            var rowClick = meta.attr(thead.rows[0], meta.options.attrClickName); // custom data-click           
+            var rowClass = meta.attr(thead.rows[0], meta.options.attrClassName); // custom data-class
             for (var r = 0; r < data.length; r++) { // forEach item in data
                 var tbody = elem.tBodies[0];
                 if (meta.isNullOrUndefined(tbody)) {
@@ -533,13 +564,13 @@ var meta = {
                 }
                 if (rowHref && rowHref.length > 0) {      // does the row have an href?
                     var rowHrefVal = dataValue.length > 0
-                        ? rowHref.replace(meta.options.indexName, data[r][dataValue])
+                        ? getLink(rowHref)
                         : rowHref;
                     tr.setAttribute("onclick", "location.href = '" + rowHrefVal + "'");
                 }
                 if (rowClick && rowClick.length > 0) {      // does the row have an click?
                     var rowClickVal = dataValue.length > 0
-                        ? rowClick.replace(meta.options.indexName, data[r][dataValue])
+                        ? getLink(rowClick)
                         : rowClick;
                     tr.setAttribute("onclick", rowClickVal);
                 }
@@ -547,13 +578,14 @@ var meta = {
                     tr.classList.add(rowClass);
                 }
                 for (var c = 0; c < headCells.length; c++) { // loop through the columns 
-                    var td = tr.insertCell(-1); // create new columns
+                    //var td = tr.insertCell(-1); // create new columns
+                    var td = this.elem("td", null, tr);
                     if (!headCells[c].hasAttribute(meta.options.attrTextName))
                         continue;
-                    var cellHref = meta.getElemAttr(headCells[c], meta.options.attrHrefName);
-                    var cellClick = meta.getElemAttr(headCells[c], meta.options.attrClickName);
+                    var cellHref = meta.attr(headCells[c], meta.options.attrHrefName);
+                    var cellClick = meta.attr(headCells[c], meta.options.attrClickName);
                     var dataColumnValue = headCells[c].getAttribute(meta.options.attrTextName);
-                    var cellClass = meta.getElemAttr(headCells[c], meta.options.attrClassName);
+                    var cellClass = meta.attr(headCells[c], meta.options.attrClassName);
                     if (cellClass && cellClass.length > 0) {
                         td.classList.add(cellClass);
                     }
@@ -565,15 +597,16 @@ var meta = {
                             a.appendChild(linkText);
                             //a.title = "my title text";
                             if (cellClick && cellClick.length > 0) {      // does the row have an click?
-                                a.setAttribute("onclick", cellClick.replace(meta.options.indexName, data[r][dataValue]));
+                                a.setAttribute("onclick", getLink(cellClick));
                             }
-                            a.href = cellHref.replace(meta.options.indexName, data[r][dataValue]);
+                            a.href = getLink(cellHref);
+
                             td.innerHTML = a.outerHTML;
                         }
                         else {
                             td.innerHTML = cellText;
                             if (cellClick && cellClick.length > 0) {      // does the row have an click?
-                                td.setAttribute("onclick", cellClick.replace(meta.options.indexName, data[r][dataValue]));
+                                td.setAttribute("onclick", getLink(cellClick));
                             }
                         }
                     }
@@ -581,12 +614,12 @@ var meta = {
                 }
             }
         } else if (elem instanceof HTMLUListElement) {
-            var ulDataText = meta.getElemAttr(elem, meta.options.attrTextName);
+            var ulDataText = meta.attr(elem, meta.options.attrTextName);
             if (!ulDataText)
                 return;
-            var ulHref = meta.getElemAttr(elem, meta.options.attrHrefName);
-            var ulClick = meta.getElemAttr(elem, meta.options.attrClickName);
-            var ulClassName = meta.getElemAttr(elem, meta.options.attrClassName);
+            var ulHref = meta.attr(elem, meta.options.attrHrefName);
+            var ulClick = meta.attr(elem, meta.options.attrClickName);
+            var ulClassName = meta.attr(elem, meta.options.attrClassName);
             for (var i = 0; i < data.length; i++) { // forEach item in data
                 var li = document.createElement("li");
                 if (ulClassName && ulClassName.length > 0)
@@ -598,15 +631,15 @@ var meta = {
                     a.appendChild(linkText);
                     //a.title = "my title text";
                     if (ulClick && ulClick.length > 0) {      // does the row have an click?
-                        a.setAttribute("onclick", ulClick.replace(meta.options.indexName, data[i][dataValue]));
+                        a.setAttribute("onclick", getLink(ulClick));
                     }
-                    a.href = ulHref.replace(meta.options.indexName, data[i][dataValue]);
+                    a.href = getLink(ulHref);
                     li.appendChild(a);
                 }
                 else {
                     li.appendChild(document.createTextNode(liText));
                     if (ulClick && ulClick.length > 0) {      // does the row have an click?
-                        li.setAttribute("onclick", ulClick.replace(meta.options.indexName, data[i][dataValue]));
+                        li.setAttribute("onclick", getLink(ulClick));
                     }
                 }
 
@@ -658,13 +691,13 @@ var meta = {
         o.success = function (data, textStatus, jqXHR) {
             // could not use insertAdjacentHTML since it creates the node
             // and sometimes we dont want the node to be closed
-            if (o.loadType === meta.loadTypesEnum.BeforeBeginAppend)
+            if (o.loadType === meta.loadTypes.BeforeBeginAppend)
                 elem.outerHTML = data + elem.outerHTML;
-            else if (o.loadType === meta.loadTypesEnum.AfterBeginAppend)
+            else if (o.loadType === meta.loadTypes.AfterBeginAppend)
                 elem.innerHTML = data + elem.innerHTML;
-            else if (o.loadType === meta.loadTypesEnum.BeforeEndAppend)
+            else if (o.loadType === meta.loadTypes.BeforeEndAppend)
                 elem.innerHTML = elem.innerHTML + data;
-            else if (o.loadType === meta.loadTypesEnum.AfterEndAppend)
+            else if (o.loadType === meta.loadTypes.AfterEndAppend)
                 elem.innerHTML = elem.outerHTML + data;
             else
                 elem.innerHTML = data;
@@ -678,7 +711,7 @@ var meta = {
     loadHeader: function (opts) {
         var o = {
             elem: document.body,
-            loadType: meta.loadTypesEnum.AfterBeginAppend
+            loadType: meta.loadTypes.AfterBeginAppend
         };
         // merge the options
         this.extend(o, opts);
@@ -688,7 +721,7 @@ var meta = {
     loadFooter: function (opts) {
         var o = {
             elem: document.body,
-            loadType: meta.loadTypesEnum.BeforeEndAppend
+            loadType: meta.loadTypes.BeforeEndAppend
         };
         // merge the options
         this.extend(o, opts);
@@ -816,9 +849,11 @@ var meta = {
     //  key: 'myData'
     // })
     // after the response is returned access the data by:
-    // var myData = meta.data.myData;  
-    // var myData = meta.data["myData"];
-    // you can also use data for page level storage
+    //  var myData = meta.data.myData;  
+    //  var myData = meta.data["myData"];
+    // you can also use data for page level storage 
+    //  meta.data.someString = "Hello";
+    //  meta.data["someJson"] = { id: 1234, description: "some value" };
     data: {},
 
 
@@ -826,7 +861,7 @@ var meta = {
     // can take objects, such as json
     // type defaults to Forever
     store_set: function (name, data, type, expiryhours) {
-        type = type || meta.storeTypesEnum.Forever;
+        type = type || meta.storeTypes.Forever;
         expiryhours = expiryhours || 720;
 
         var dataStr = this.toString(data);
@@ -839,7 +874,7 @@ var meta = {
             created: now.getTime(),
             lastread: now.getTime()
         };
-        var storage = type === meta.storeTypesEnum.Session
+        var storage = type === meta.storeTypes.Session
             ? window.sessionStorage
             : window.localStorage;
         var objStr = JSON.stringify(obj);
@@ -863,22 +898,22 @@ var meta = {
         try {
             var obj = JSON.parse(json);
             var expiry, now;
-            if (obj.type === meta.storeTypesEnum.Session)
+            if (obj.type === meta.storeTypes.Session)
                 return obj.value;
-            else if (obj.type === meta.storeTypesEnum.Forever)
+            else if (obj.type === meta.storeTypes.Forever)
                 return obj.value;
-            else if (obj.type === meta.storeTypesEnum.OneTimeRead) {
+            else if (obj.type === meta.storeTypes.OneTimeRead) {
                 var value = obj.value;
                 storage.setItem(name, null);
                 return value;
-            } else if (obj.type === meta.storeTypesEnum.ExpiryNoExtend) {
+            } else if (obj.type === meta.storeTypes.ExpiryNoExtend) {
                 expiry = new Date();
                 expiry.setTime(obj.created);
                 expiry.setMinutes(expiry.getMinutes() + obj.expiry);
                 now = new Date();
                 if (now.getTime() <= expiry.getTime())
                     return obj.value;
-            } else if (obj.type === meta.storeTypesEnum.ExpiryExtend) {
+            } else if (obj.type === meta.storeTypes.ExpiryExtend) {
                 expiry = new Date();
                 expiry.setTime(obj.lastread);
                 expiry.setMinutes(expiry.getMinutes() + obj.expiry);
@@ -902,24 +937,6 @@ var meta = {
 
     // START util functions
 
-    // filters a json array to where a key matches a value
-    //
-    //  jsonArray:  the json Array you want filtered
-    //  key:        the key to match on
-    //  value:      the vlaue that the key should be
-    //  first:      true if the method returns the first found, false to return an array of every match
-    filter: function (jsonArray, key, value, first) {
-        var arr = [];
-        for (var i = 0; i < jsonArray.length; i++) {
-            if (jsonArray[i][key] === value)
-                if (first)
-                    return jsonArray[i];
-                else
-                    arr.push(jsonArray[i]);
-        }
-        return arr;
-    },
-
     // gets a querystring value from a url
     // 
     // url is optional - uses current location if not specified
@@ -933,13 +950,45 @@ var meta = {
         return decodeURIComponent(results[2].replace(/\+/g, " "));
     },
 
-    // safe function to get an attribute of an element
-    //
-    // returns empty string ('') if anything goes wrong, such as elem doesnt exist
+
     getElemAttr: function (elem, attrName) {
+        this.log("meta.getElemAttr", "**DEPRACATION WARNING** meta.getElemAttr should be replaced with meta.attr", meta.modes.warning);
+        return this.attr(elem, attrName);
+    },
+
+    // function to get and/or set/create the value of an elements attribute
+    // and safely returns an attribute of an element
+    //
+    // NOTES:
+    // - supply elem and attrName, leave attrValue blank, to only return attribute value 
+    // - returns empty string ('') if anything goes wrong, such as elem doesnt exist
+    attr: function (elem, attrName, attrValue) {
+        // set the attribute if value is included
+        if (!meta.isNullOrUndefined(attrValue) && elem && elem.hasAttribute && elem.setAttribute) {
+            elem.setAttribute(attrName, attrValue);
+        }
+
         if (elem && elem.hasAttribute && elem.getAttribute && elem.hasAttribute(attrName))
             return elem.getAttribute(attrName);
         return '';
+    },
+
+    // creates and returns an element
+    // optionally adds attributes and appends new element to another element
+    // examples:
+    // var newDiv = meta.elem("div");
+    // meta.elem("input", {data-value: 'itemId'});
+    // meta.elem("input", {type: 'hidden', data-value: 'itemId'});
+    // meta.elem("input", null, divContainer);
+    elem: function (tagName, attributes, appendTo) {
+        var e = document.createElement(tagName);
+        if (!this.isNullOrUndefined(attributes) && this.isJson(attributes)) {
+            this.eachJsonKey(attributes, function (key, value) { meta.attr(e, key, value); });
+        }
+        if (!this.isNullOrUndefined(appendTo)) {
+            appendTo.appendChild(e);
+        }
+        return e;
     },
 
     // unique: returns a unique number
@@ -1043,6 +1092,63 @@ var meta = {
         return src.toString();
     },
 
+    // meta.encode: encodes a value to an encoded string
+    //  val: value to be encoded, does not need to be a string
+    //  encodeType (optional): encodeTypes to define encoding type
+    //      url: html safe 
+    //      base64 (default): file transfers
+    //      utf16: international characters
+    //  en
+    // examples:
+    // var val = meta.encode("hello");    // returns aGVsbG8gd29ybGQ= 
+    // var val = meta.encode("hello", meta.encodeTypes.base64);    // returns aGVsbG8gd29ybGQ= 
+    // var val = meta.encode("https://www.metascraper.com/my test.asp?value=åbåc&car=saab", meta.encodeTypes.url);    // returns https%3A%2F%2Fwww.metascraper.com%2Fmy%20test.asp%3Fvalue%3D%C3%A5b%C3%A5c%26car%3Dsaab
+    // var val = meta.encode("hello 我一个人来", meta.encodeTypes.utf16);      // returns aGVsbG8g5oiR5LiA5Liq5Lq65p2l
+    encode: function (val, encodeType) {
+        switch (encodeType) {
+            case meta.encodeTypes.url:
+                return encodeURI(val);
+                break;
+
+            case meta.encodeTypes.urlParameter:
+                return encodeURIComponent(val);
+                break;
+
+            case meta.encodeTypes.utf16:
+                return btoa(unescape(encodeURIComponent(val)));
+                break;
+
+                //case meta.encodeTypes.base64:
+            default:
+                return btoa(this.toString(val));
+
+        }
+    },
+
+
+    // meta.decode: decodes a value from an encoded string
+    // see meta.encode for addiitonal documentation
+    decode: function (val, encodeType) {
+        switch (encodeType) {
+            case meta.encodeTypes.url:
+                return decodeURI(val);
+                break;
+
+            case meta.encodeTypes.urlParameter:
+                return decodeURIComponent(val);
+                break;
+
+            case meta.encodeTypes.utf16:
+                return decodeURIComponent(escape(atob(val)));
+                break;
+
+                //case meta.encodeTypes.base64:
+            default:
+                return atob(this.toString(val));
+
+        }
+    },
+
     log: function (funcName, description, mode) {
         if (mode >= this.options.mode) {
             var msg = funcName + '::' + description;
@@ -1091,6 +1197,44 @@ var meta = {
             var key = Object.keys(json)[i];
             f(key, json[key]);
         }
+    },
+
+    // filters a json array to where a key matches a value
+    //
+    //  jsonArray:  the json Array you want filtered
+    //  key:        the key to match on
+    //  value:      the value that the key should be
+    //  first:      true if the method returns the first found, false to return an array of every match
+    filterJson: function (jsonArray, key, value, first) {
+        var arr = [];
+        for (var i = 0; i < jsonArray.length; i++) {
+            if (jsonArray[i][key] === value)
+                if (first)
+                    return jsonArray[i];
+                else
+                    arr.push(jsonArray[i]);
+        }
+        return arr;
+    },
+
+    filter: function (jsonArray, key, value, first) {
+        this.log("meta.filter", "**DEPRACATION WARNING** meta.filter should be replaced with meta.filterJson", meta.modes.warning);
+        return this.filterJson(jsonArray, key, value, first);
+    },
+
+    // sorts a json array based on a key
+    //
+    //  jsonArray:  the json Array you want sorted
+    //  key:        the key to sort on
+    //  asc:        boolean of whether ot sort ascending(true) or descending
+    sortJson: function (jsonArray, key, asc) {
+        jsonArray.sort(function (a, b) {
+            if (asc) {
+                return (a[key] > b[key]) ? 1 : ((a[key] < b[key]) ? -1 : 0);
+            } else {
+                return (b[key] > a[key]) ? 1 : ((b[key] < a[key]) ? -1 : 0);
+            }
+        });
     },
 
     // compares all types of versions
@@ -1212,6 +1356,7 @@ var meta = {
             headers: {},
             key: "",
             success: function (data, textStatus, xhr) { },
+            beforeSend: function (xhr, options) { },
             error: function (xhr, textStatus, errorThrown) {
                 var status = textStatus || 'Unhandled Error';
                 throw { "errorThrown": errorThrown, "textStatus": status };
@@ -1265,13 +1410,19 @@ var meta = {
         // check the data format
         // if FormData send as is else set the header for JSON and send string
         if (options.data instanceof FormData) {
+            if (options.beforeSend(xhr, options) === false) {
+                return;
+            }
             xhr.send(options.data);
         } else {
             try {
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                if (options.beforeSend(xhr, options) === false) {
+                    return;
+                }
                 if (options.data && typeof options.data !== "string") {
                     options.data = meta.toString(options.data);
                 }
-                xhr.setRequestHeader('Content-Type', 'application/json');
                 xhr.send(options.data);
             } catch (e) {
                 throw new e;
@@ -1293,17 +1444,49 @@ var meta = {
 
     // ready - executes function f() when page DOM is loaded
     ready: function (f) {
+        var _name = "__ready";
+
         var state = document.readyState;
-        if (state === 'interactive' || state === 'complete')
-            f();
-        else
-            setTimeout(function () { meta.ready(f); }, 100);
+        if (state === 'interactive' || state === 'complete') {
+            // execute the queue
+            if (!this.isNullOrUndefined(this.data[_name])) {
+                var next = this.data[_name].shift();
+                while (next) {
+                    next();
+                    next = this.data[_name].shift();
+                }
+                delete meta.data[_name];
+            }
+            // execute the current function if we have one.
+            if (f) {
+                f();
+            }
+        }
+        else {
+            if (f) {
+                // store into a queue
+                if (this.isNullOrUndefined(this.data["__ready"])) {
+                    this.data["__ready"] = [f];
+                }
+                else {
+                    this.data["__ready"].push(f);
+                }
+            }
+            setTimeout(function () { meta.ready(null); }, 100);
+        }
     },
 
+    // select - returns first element that matches id
     select: function (id) {
         return document.getElementById(id);
     },
 
+    // selectAll - returns all elements that match filter. container defaults to document
+    // var all_p_elements                           = meta.selectAll("p");
+    // var all_divs_with_error_or_popup_class       = meta.selectAll("div.error, div.popup");
+    // var all_divs_inside_p_with_class_error       = meta.selectAll("div.error > p");
+    // var all_spans_with_attr_data-src             = meta.selectAll("span[data-src]");
+    // var all_inputs_with_attr_data-active_equal_1 = meta.selectAll("input[data-active=1]");
     selectAll: function (filter, container) {
         container = container || document;
         return container.querySelectorAll(filter);

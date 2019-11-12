@@ -35,7 +35,7 @@ Metascraper is designed with one principal in mind - reducing redundant code in 
 
 (put/update) calls `.send()` using PUT. same as `.update()`
 
-**del** `meta.del(options)` 
+**delete** `meta.delete(options)` 
 
 (delete/delete) calls `.send()` using DELETE
  
@@ -232,7 +232,7 @@ safe json parse, returns false if parse fails
 
 loops through all keys of json and calls f(key, value) for each item 
 
-**filter** `meta.filter(jsonArray, key, value, first)`
+**filterJson** `meta.filter(jsonArray, key, value, first)`
 
 filters a json array to where a key matches a value
     jsonArray: the json Array you want filtered
@@ -251,6 +251,21 @@ executes a function asyncronously
 makes a copy of whatever you throw at it, even functions. all objects (json, array, html) are deep copies. 
 value copy - null, undefined, number, string, date
 deep copy - json, array, array of json, html node or element
+
+**encode** `meta.encode(val, encodeType)`
+encodes a value to an encoded string
+ val: value to be encoded, does not need to be a string
+ encodeType (optional): meta.encodeTypesEnum to define encoding type
+   .url: html safe 
+   .base64 (default): file transfers
+   .utf16: international characters  
+ 
+```javascript
+  var val = meta.encode("hello");    // returns aGVsbG8gd29ybGQ= 
+  var val = meta.encode("hello", meta.encodeTypesEnum.base64);    // returns aGVsbG8gd29ybGQ= 
+  var val = meta.encode("https://www.metascraper.com/my test.asp?value=åbåc&car=saab", meta.encodeTypesEnum.url);    // returns https%3A%2F%2Fwww.metascraper.com%2Fmy%20test.asp%3Fvalue%3D%C3%A5b%C3%A5c%26car%3Dsaab
+  var val = meta.encode("hello 我一个人来", meta.encodeTypesEnum.utf16);      // returns aGVsbG8g5oiR5LiA5Liq5Lq65p2l
+```
 
 **extend** `meta.extend(target, src)`
 

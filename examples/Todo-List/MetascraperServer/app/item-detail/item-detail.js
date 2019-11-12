@@ -27,17 +27,12 @@ function deleteClick() {
             divMessage.innerText = "An Error Occurred. Please Try Again.";
         }
     };
-    meta.del(o);
-}
-
-// headerLoaded is called from global.loggedIn.js
-function headerLoaded() {
-    active(navItem);
+    meta.delete(o);
 }
 
 function initPage() {
     var itemId = meta.getUrlParam('itemId') || "0";
-    if (itemId) {
+    if (itemId !== "0") {
         btnDelete.classList.remove('none');
     } 
     var o = {
@@ -49,4 +44,8 @@ function initPage() {
     meta.get(o);
 }
 
-meta.ready(initPage);
+// DOM and scripts are loaded, call initPage(); 
+function pageReady() {
+    initPage();
+    active(navItem);
+}

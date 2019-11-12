@@ -1,3 +1,24 @@
+**Metascraper 1.1.0** (released October 30 2019)
+This is a major update. The following major new features were added: 
+* meta.options.attrKeyName: defines key to use to a link
+* meta.attr: function to get and/or set/create the value of an elements attribute and safely returns an attribute of an element
+* meta.elem: creates and returns an element and optionally adds attributes and appends new element to another element
+* meta.encode: encodes a value to base64 string
+* meta.decode: decodes a base64 string to a string
+* meta.sortJson: sorts a json array based on a key
+
+In addition, the following items were fixed and/or added: 
+* meta.send: extends request with opts.data instead of request
+* meta.del: depracated in favor or meta.delete
+* meta.filter: depracated in favor or meta.filterJson
+* meta.logout: url will now use webApiPrefix as needed
+* meta.fill: uses meta.attrKeyName when defined, other cleanup
+* meta.ajax: adds options.beforeSend and allows user to cancel
+* meta.getValue: correctly applies value to textarea
+* meta.receive: added container property so that data gets bound only to container
+* meta.ready: uses queue to ensure functions are executed in correct order
+
+
 **Metascraper 1.0.0** (released April 09 2019)
 This is a major update. The following major new features were added: 
 * meta.loadLinkFile: dynamically loads a file to a <link> element

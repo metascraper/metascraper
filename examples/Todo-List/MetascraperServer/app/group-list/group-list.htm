@@ -6,27 +6,30 @@
 
     <link href="group-list.css" rel="stylesheet" />
 
-    <script src="../scripts/vendor/metascraper-1.0.0/metascraper-1.0.0.js"></script>
+    <script src="../scripts/vendor/metascraper-1.1.0/metascraper-1.1.0.js"></script>
     <script src="../scripts/global.loggedin.js"></script>
     <script src="group-list.js"></script>
 
 </head>
 <body>
 
-    <h3>Group List</h3>
-    <table id="tblGroups" data-array="Groups" data-value="GroupId">
-        <thead>
-            <tr data-click="rowClicked({{*index}})">
-                <th data-text="Description">
-                    Name
-                </th>
-                <th data-text="CreateDate" data-type="datetime">
-                    Created Date
-                </th>
-            </tr>
-        </thead>
-    </table>
+    <div id="divGroupList">
+        <h3>Group List</h3>
+        <table id="tblGroups" data-array="Groups" data-value="GroupId">
+            <thead>
+                <tr data-click="rowClicked({{*data-value}})">
+                    <th data-text="Description">
+                        Name
+                    </th>
+                    <th data-text="CreateDate" data-type="datetime">
+                        Created Date
+                    </th>
+                </tr>
+            </thead>
+        </table>
+    </div>
     <div id="divMessage" style="color: red"></div>
+
 
     <div id="divDetails">
         <h3>

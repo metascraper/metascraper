@@ -1,10 +1,10 @@
-﻿const emptyGroup = { "Group": { "Description": "" } };
+﻿const emptyGroup = { "Group": { GroupId: 0, Description: "" } };
 var groupsUrl = 'http://localhost:49723/api/groups/';
 
 /* user clicked on row, get the selected group and bind */
 function rowClicked(groupId) {
     // setting "key" to "groupData" on function refreshData below allows us to access the json returned
-    var group = meta.filter(meta.data.groupData.Groups, "GroupId", groupId, true);
+    var group = meta.filterJson(meta.data.groupData.Groups, "GroupId", groupId, true);
     var json = { "Group" : group };
     // binds the selected group to the edit fields
     meta.bind(json);    
@@ -49,7 +49,7 @@ function deleteClick() {
             divMessage.innerText = "An Error Occurred. Please Try Again.";
         }
     };
-    meta.del(o);
+    meta.delete(o);
 }
 
 /* refresh all data on the page */
@@ -59,10 +59,11 @@ function refreshData() {
         tblGroups.deleteRow(1);
     }
     // binds an empty group, which inheritly clears out all edit fields 
-    meta.bind(emptyGroup);  
+    meta.bind(emptyGroup, divDetails);
     var params = {
         url: groupsUrl,
         key: "groupData",
+        container: divGroupList,
         error: function (jqXHR, textStatus, errorThrown) {
             divMessage.innerText = "An Error Occurred. Please Try Again.";
         }
@@ -72,11 +73,7 @@ function refreshData() {
     hide(btnDelete);
 }
 
-// headerLoaded is called from global.loggedIn.js
-function headerLoaded() {
+function pageReady() {
+    refreshData();
     active(navGroup);
 }
-
-meta.ready(function () {
-    refreshData();
-});
